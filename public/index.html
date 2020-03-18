@@ -22,10 +22,11 @@
 <script src="http://18.180.102.215:6001/socket.io/socket.io.js"></script>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
+    localStorage.debug = '*';
     $(function () {
         // import Echo from "laravel-echo"
         // window.io = io;
-        socket = io(window.location.host + ':6001');
+        socket = io(window.location.host + ':6001',{transports: ['websocket']});
         socket.on('connect', function(){
             console.log('connect');
         });
@@ -56,6 +57,18 @@
         //     return false;
         // });
         socket.on(`hello-channel:App\\Events\\BroadcastEvent`, function (data) {
+            if(data) {
+                console.log(data);
+                alert('success');
+            }
+        });
+        socket.on(`public`, function (data) {
+            if(data) {
+                console.log(data);
+                alert('success');
+            }
+        });
+        socket.on(`public:App\\Notifications\\Hello`, function (data) {
             if(data) {
                 console.log(data);
                 alert('success');
