@@ -16,8 +16,8 @@
 </head>
 <body>
 <ul id="messages"></ul>
-<form action="">
-    <input id="m" autocomplete="off" /><button>Send</button>
+<form action="test-broadcast" id="form">
+    <input title="m" name="m" id="m" autocomplete="off" /><button>Send</button>
 </form>
 <!--<script src="http://18.180.102.215:6001/socket.io/socket.io.js"></script>-->
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
@@ -62,6 +62,22 @@
         //         console.log('something wrong!')
         //     }
         // })
+        $("#form").submit(function(e) {
+            var form = $(this);
+            var url = form.attr('action');
+
+            $.ajax({
+                type: "GET",
+                url: url,
+                data: form.serialize(), // serializes the form's elements.
+                success: function(data)
+                {
+                    console.log('send success!'); // show response from the php script.
+                }
+            });
+
+            e.preventDefault(); // avoid to execute the actual submit of the form.
+        });
         // $('form').submit(function(){
         //     socket.io.emit('chat_message', $('#m').val());
         //     $('#m').val('');

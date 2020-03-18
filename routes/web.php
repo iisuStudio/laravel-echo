@@ -16,7 +16,7 @@ Route::get('/', function () {
 });
 
 Route::get('test-broadcast', function(){
-    broadcast(new \App\Events\BroadcastEvent);
+    broadcast(new \App\Events\BroadcastEvent(request()->input('m', null)));
     broadcast(new \App\Notifications\Hello);
 //    (new \App\Notifications\Hello())->onConnection('redis')->onQueue('default');
 });

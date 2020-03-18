@@ -14,14 +14,16 @@ class BroadcastEvent implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    protected $message;
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct()
+    public function __construct($message)
     {
         //
+        $this->message = $message;
     }
 
     /**
@@ -37,7 +39,7 @@ class BroadcastEvent implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
-            'message' => 'hello world!',
+            'message' => $this->message ?: 'hello world!',
             'date' => date('Y/m/d H:i:s')
         ];
     }
