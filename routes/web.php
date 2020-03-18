@@ -12,7 +12,8 @@
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect('index.html');
+//    return view('welcome');
 });
 
 Route::get('test-broadcast', function(){
