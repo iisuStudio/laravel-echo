@@ -1,0 +1,10 @@
+/storage/app/
+/storage/app/public/
+/storage/deploy/
+/storage/deploy/temp/
+/storage/framework/
+/storage/framework/cache/
+/storage/framework/testing/
+/storage/framework/sessions/
+/storage/framework/views/
+/storage/logs/

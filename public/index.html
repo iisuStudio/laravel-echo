@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+    <title>Socket.IO chat</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font: 13px Helvetica, Arial; }
+        form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+        form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+        form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+        #messages { list-style-type: none; margin: 0; padding: 0; }
+        #messages li { padding: 5px 10px; }
+        #messages li:nth-child(odd) { background: #eee; }
+        #messages { margin-bottom: 40px }
+    </style>
+</head>
+<body>
+<ul id="messages"></ul>
+<form action="">
+    <input id="m" autocomplete="off" /><button>Send</button>
+</form>
+<script src="http://18.180.102.215:6001/socket.io/socket.io.js"></script>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+    $(function () {
+        // import Echo from "laravel-echo"
+        // window.io = io;
+        socket = io(window.location.host + ':6001');
+        socket.on('connect', function(){
+            console.log('connect');
+        });
+        socket.on('event', function(data){
+            console.log(data);
+        });
+        socket.on('disconnect', function(){
+            console.log('disconnect');
+        });
+        // window.Echo = new Echo({
+        //    broadcaster: function(){
+        //
+        //    },
+        //    host: 'laravel.iisustudio.com' + ':6001'
+        // });
+        //console.log(window.Echo);
+        //var socket = io('http://laravel.iisustudio.com:80');
+        // window.Echo.private('Message').listen('.sayHello', (res) => {
+        //     if (res.status === 200) {
+        //         console.log(res.message)
+        //     } else {
+        //         console.log('something wrong!')
+        //     }
+        // })
+        // $('form').submit(function(){
+        //     socket.io.emit('chat_message', $('#m').val());
+        //     $('#m').val('');
+        //     return false;
+        // });
+        socket.on(`hello-channel:App\\Events\\BroadcastEvent`, function (data) {
+            if(data) {
+                console.log(data);
+                alert('success');
+            }
+        });
+        // socket.on('chat_message', function(msg){
+        //     $('#messages').append($('<li>').text(msg));
+        //     window.scrollTo(0, document.body.scrollHeight);
+        // });
+    });
+</script>
+</body>
+</html>
