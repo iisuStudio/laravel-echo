@@ -37,7 +37,8 @@ class BroadcastEvent implements ShouldBroadcast
     public function broadcastWith()
     {
         return [
-            'data' => 'hello world!'
+            'message' => 'hello world!',
+            'date' => date('Y/m/d H:i:s')
         ];
     }
 }

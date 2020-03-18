@@ -19,23 +19,34 @@
 <form action="">
     <input id="m" autocomplete="off" /><button>Send</button>
 </form>
-<script src="http://18.180.102.215:6001/socket.io/socket.io.js"></script>
+<!--<script src="http://18.180.102.215:6001/socket.io/socket.io.js"></script>-->
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script src="js/app.js"></script>
 <script>
     localStorage.debug = '*';
     $(function () {
         // import Echo from "laravel-echo"
         // window.io = io;
-        socket = io(window.location.host + ':6001',{transports: ['websocket']});
-        socket.on('connect', function(){
-            console.log('connect');
+        // socket = io(window.location.host + ':6001',{transports: ['websocket']});
+        window.Echo.channel('hello-channel').listen('BroadcastEvent', (event) => {
+            // alert(1);
+            console.log(event);
+            $('#messages').append($('<li>').text(event.date + '  /  ' + event.message));
+            window.scrollTo(0, document.body.scrollHeight);
         });
-        socket.on('event', function(data){
-            console.log(data);
-        });
-        socket.on('disconnect', function(){
-            console.log('disconnect');
-        });
+
+        // window.Echo.channel('public').notification('Hello', (event) => {
+        //     console.log(event);
+        // });
+        // socket.on('connect', function(){
+        //     console.log('connect');
+        // });
+        // socket.on('event', function(data){
+        //     console.log(data);
+        // });
+        // socket.on('disconnect', function(){
+        //     console.log('disconnect');
+        // });
         // window.Echo = new Echo({
         //    broadcaster: function(){
         //
@@ -56,24 +67,24 @@
         //     $('#m').val('');
         //     return false;
         // });
-        socket.on(`hello-channel:App\\Events\\BroadcastEvent`, function (data) {
-            if(data) {
-                console.log(data);
-                alert('success');
-            }
-        });
-        socket.on(`public`, function (data) {
-            if(data) {
-                console.log(data);
-                alert('success');
-            }
-        });
-        socket.on(`public:App\\Notifications\\Hello`, function (data) {
-            if(data) {
-                console.log(data);
-                alert('success');
-            }
-        });
+        // socket.on(`hello-channel:App\\Events\\BroadcastEvent`, function (data) {
+        //     if(data) {
+        //         console.log(data);
+        //         alert('success');
+        //     }
+        // });
+        // socket.on(`public`, function (data) {
+        //     if(data) {
+        //         console.log(data);
+        //         alert('success');
+        //     }
+        // });
+        // socket.on(`public:App\\Notifications\\Hello`, function (data) {
+        //     if(data) {
+        //         console.log(data);
+        //         alert('success');
+        //     }
+        // });
         // socket.on('chat_message', function(msg){
         //     $('#messages').append($('<li>').text(msg));
         //     window.scrollTo(0, document.body.scrollHeight);
