@@ -1,4 +1,5 @@
 <?php
+use BeyondCode\LaravelWebSockets\Facades\WebSocketsRouter;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,3 +22,5 @@ Route::get('test-broadcast', function(){
     broadcast(new \App\Notifications\Hello);
 //    (new \App\Notifications\Hello())->onConnection('redis')->onQueue('default');
 });
+
+WebSocketsRouter::webSocket('/my-websocket', \App\MyCustomWebSocketHandler::class);
