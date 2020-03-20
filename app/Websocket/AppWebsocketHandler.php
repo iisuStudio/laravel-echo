@@ -71,14 +71,16 @@ class AppWebsocketHandler implements MessageComponentInterface
         //StatisticsLogger::webSocketMessage($from);
         try {
             Log::v('R', $from, "receiving message \"{$msg}\"");
-            $numRecv = count($this->clients) - 1;
-            foreach ($this->clients as $client) {
-                if ($from !== $client) {
-                    // The sender is not the receiver, send to each client connected
-                    $client->send($msg);
-                    Log::v('S', $client, "sending message \"{$msg}\"");
-                }
-            }
+            $from->send($msg);
+            Log::v('S', $from, "sending message \"{$msg}\"");
+//            $numRecv = count($this->clients) - 1;
+//            foreach ($this->clients as $client) {
+//                if ($from !== $client) {
+//                    // The sender is not the receiver, send to each client connected
+//                    $client->send($msg);
+//                    Log::v('S', $client, "sending message \"{$msg}\"");
+//                }
+//            }
         } catch (Exception $e) {
             Log::e($e);
         }
