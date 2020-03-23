@@ -107,7 +107,7 @@
 
     //網頁端連線
     $(function () {
-        var conn = new WebSocket( 'ws://' + window.location.host + ':9090?appKey=echo');
+        var conn = new WebSocket( 'ws://' + window.location.host + '/socket.io/?appKey=echo');
         conn.onopen = function(socket, event){
             console.log('web-event:connection opened!');
         };
