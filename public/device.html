@@ -64,7 +64,7 @@
 
         $("#add-device input[name=uid]").val(token());
         $("#add-device").submit(function(e) {
-            var conn = new WebSocket( 'ws://' + window.location.host + ':9090?appKey=echo');
+            var conn = new WebSocket( 'ws://' + window.location.host + '/socket.app/?appKey=echo');
             var data = {};
             data.event = "app:init";
             data.uid = $("#add-device input[name=uid]").val() ? $("#add-device input[name=uid]").val() : token();
