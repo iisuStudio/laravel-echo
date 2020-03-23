@@ -36,15 +36,24 @@ class AppChannelProtocolMessage implements PusherMessage
             // TODO::event function name in app
             // call_user_func([$this, $eventName], $this->connection, $this->payload->data ?? new stdClass());
         } elseif ($eventName == 'init') {
-            $this->registerUID($this->connection, $this->payload);
+            $this->initUID($this->connection, $this->payload);
+        } elseif ($eventName == 'unload') {
+            $this->unloadUID($this->connection, $this->payload);
         }
     }
 
-    protected function registerUID(ConnectionInterface $connection, stdClass $payload)
+    protected function initUID(ConnectionInterface $connection, stdClass $payload)
     {
         $payload->data = $payload->data ?? (object) [];
         $payload->channel = 'UID_' . $payload->uid;
         $this->subscribe($connection, $payload);
+    }
+
+    protected function unloadUID(ConnectionInterface $connection, stdClass $payload)
+    {
+        $payload->data = $payload->data ?? (object) [];
+        $payload->channel = 'UID_' . $payload->uid;
+        $this->unsubscribe($connection, $payload);
     }
 
     /*

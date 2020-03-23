@@ -41,13 +41,10 @@
     </select>
     <br>
     <label>Action name: </label>
-    <input title="action" name="action" placeholder="addFriend" value="addFriend" />
-    <br>
-    <label>message data: </label>
-    <input title="action_data" name="action_data" value="{'name':'王曉明','token':'AAA'}" />
+    <input title="action" name="action" placeholder="delFriend" value="delFriend" />
     <br>
     <br>
-    <button type="button" name="register">register</button><button type="button" name="send">send</button>
+    <button type="button" name="register">監聽訊息</button><button type="button" name="unregister">取消監聽</button><button type="button" name="send">發送訊息</button>
 </form>
 <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
 <script>
@@ -71,11 +68,21 @@
 
             conn.onopen = function(socket, event){
                 console.log('device:connection opened!');
-                $("#device-table tbody").append("<tr id='device-"+data.uid+"'><td class='uid'>"+data.uid+"</td><td class='message'>"+data.event+"</td><td>active</td><td><button type='button' name='register-device-"+data.uid+"'>register</button></td></tr>");
+                $("#device-table tbody").append("<tr id='device-"+data.uid+"'><td class='uid'>"+data.uid+"</td><td class='message'>"+data.event+"</td><td>active</td><td><button type='button' name='register-device-"+data.uid+"'>監聽訊息</button><button type='button' name='unregister-device-"+data.uid+"'>取消監聽</button></td></tr>");
             };
+
+            $("#device-table").on('click','button[name=unregister-device-'+data.uid+']',function(e){
+                console.log('device: ' + data.uid + ' unload start');
+                data.event = "app:unload";
+                conn.send(JSON.stringify(data));
+
+                $("#web-action select[name=uid]").append("<option value='" + data.uid + "'>"+data.uid+"</option>");
+                console.log('device: ' + data.uid + ' unload end');
+            });
 
             $("#device-table").on('click','button[name=register-device-'+data.uid+']',function(e){
                 console.log('device: ' + data.uid + ' init start');
+                data.event = "app:init";
                 conn.send(JSON.stringify(data));
 
                 $("#web-action select[name=uid]").append("<option value='" + data.uid + "'>"+data.uid+"</option>");
@@ -86,7 +93,7 @@
                 var message = JSON.parse(socket.data);
                 console.log('device received message!');
                 if(message.event === 'client-event') {
-                    $('#device-'+message.uid+ ' .message' ).append('<span>need to do action: '+message.action+'</span>')
+                    $('#device-'+message.uid+ ' .message' ).append('<span>command: '+message.command+'</span>')
                 } else {
                     console.log(socket);
                 }
@@ -119,6 +126,17 @@
                 console.log(socket);
             }
         };
+        $('#web-action button[name=unregister]').click(function(){
+            console.log('web-event: ' + uid + ' unload start');
+            var data = {};
+            var uid = $("#web-action select[name=uid]").val();
+
+            data.event = "app:unload";
+            data.uid = uid;
+            conn.send(JSON.stringify(data));
+            console.log('web-event: ' + uid + ' unload end');
+        });
+
         $('#web-action button[name=register]').click(function(){
             console.log('web-event: ' + uid + ' init start');
             var data = {};
@@ -140,8 +158,7 @@
             data2.event = "client-event";
             data2.uid = uid;
             data2.channel = "UID_" + uid;
-            data2.action = action;
-            data2.action_data = action_data;
+            data2.command = action + "|" + uid;
             conn.send(JSON.stringify(data2));
             console.log('web-event: ' + uid + ' send end');
 

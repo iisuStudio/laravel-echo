@@ -88,6 +88,8 @@ class AppWebsocketHandler implements MessageComponentInterface
 
     public function onClose(ConnectionInterface $conn)
     {
+        $this->channelManager->removeFromAllChannels($conn);
+
         try {
             // The connection is closed, remove it, as we can no longer send it messages
             $this->clients->detach($conn);
