@@ -71,7 +71,7 @@ class AppWebsocketHandler implements MessageComponentInterface
         //StatisticsLogger::webSocketMessage($from);
         try {
             Log::v('R', $from, "receiving message \"{$msg}\"");
-            $from->send($msg);
+//            $from->send($msg);
             Log::v('S', $from, "sending message \"{$msg}\"");
 //            $numRecv = count($this->clients) - 1;
 //            foreach ($this->clients as $client) {
@@ -113,6 +113,8 @@ class AppWebsocketHandler implements MessageComponentInterface
         }
 
         $connection->app = $app;
+
+        $connection->app->enableClientMessages(true);
 
         return $this;
     }

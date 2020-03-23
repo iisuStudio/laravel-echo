@@ -42,8 +42,8 @@ class AppChannelProtocolMessage implements PusherMessage
 
     protected function registerUID(ConnectionInterface $connection, stdClass $payload)
     {
-        $payload->data = $payload->data ?? new stdClass();
-        $payload->data->channel = 'UID_' . $payload->uid;
+        $payload->data = $payload->data ?? (object) [];
+        $payload->channel = 'UID_' . $payload->uid;
         $this->subscribe($connection, $payload);
     }
 

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-tw">
+<head>
+    <title>Socket.APP Sample</title>
+    <style>
+        table tr td>span {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+<H1>Socket.APP Sample</H1>
+<H2>Device List</H2>
+<form action="javascript:void(0)" id="add-device">
+    <label>UID: </label>
+    <input title="uid" name="uid" autocomplete="off" />
+    <br>
+    <br>
+    <button>Create a new device connect!</button>
+</form>
+<br>
+<br>
+<table id="device-table">
+    <thead>
+    <tr>
+        <th>UID</th>
+        <th>MESSAGE</th>
+        <th>STATUS</th>
+        <th>ACTION</th>
+    </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+
+<H2>Web Event</H2>
+<ul id="messages"></ul>
+<form action="" id="web-action">
+    <label>Select device to do action: </label>
+    <select title="uid" name="uid">
+    </select>
+    <br>
+    <label>Action name: </label>
+    <input title="action" name="action" placeholder="addFriend" value="addFriend" />
+    <br>
+    <label>message data: </label>
+    <input title="action_data" name="action_data" value="{'name':'王曉明','token':'AAA'}" />
+    <br>
+    <br>
+    <button type="button" name="register">register</button><button type="button" name="send">send</button>
+</form>
+<script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+<script>
+    localStorage.debug = '*';
+    //裝置端連線
+    $(function () {
+        var rand = function () {
+            return Math.random().toString(36).substr(2); // remove `0.`
+        };
+
+        var token = function () {
+            return rand() + rand(); // to make it longer
+        };
+
+        $("#add-device input[name=uid]").val(token());
+        $("#add-device").submit(function(e) {
+            var conn = new WebSocket( 'ws://' + window.location.host + ':9090?appKey=echo');
+            var data = {};
+            data.event = "app:init";
+            data.uid = $("#add-device input[name=uid]").val() ? $("#add-device input[name=uid]").val() : token();
+
+            conn.onopen = function(socket, event){
+                console.log('device:connection opened!');
+                $("#device-table tbody").append("<tr id='device-"+data.uid+"'><td class='uid'>"+data.uid+"</td><td class='message'>"+data.event+"</td><td>active</td><td><button type='button' name='register-device-"+data.uid+"'>register</button></td></tr>");
+            };
+
+            $("#device-table").on('click','button[name=register-device-'+data.uid+']',function(e){
+                console.log('device: ' + data.uid + ' init start');
+                conn.send(JSON.stringify(data));
+
+                $("#web-action select[name=uid]").append("<option value='" + data.uid + "'>"+data.uid+"</option>");
+                console.log('device: ' + data.uid + ' init end');
+            });
+
+            conn.onmessage = function(socket, event){
+                var message = JSON.parse(socket.data);
+                console.log('device received message!');
+                if(message.event === 'client-event') {
+                    $('#device-'+message.uid+ ' .message' ).append('<span>need to do action: '+message.action+'</span>')
+                } else {
+                    console.log(socket);
+                }
+
+                // 傳遞完事件後close
+                // conn.close();
+            };
+
+            // 保持連線不須close
+            // conn.close();
+
+            $("#add-device input[name=uid]").val(token());
+            e.preventDefault(); // avoid to execute the actual submit of the form.
+            return false;
+        });
+
+    });
+
+    //網頁端連線
+    $(function () {
+        var conn = new WebSocket( 'ws://' + window.location.host + ':9090?appKey=echo');
+        conn.onopen = function(socket, event){
+            console.log('web-event:connection opened!');
+        };
+        conn.onmessage = function(socket, event){
+            var message = JSON.parse(socket.data);
+            if(message.event === 'app:pusher_internal:subscription_succeeded') {
+
+            } else {
+                console.log(socket);
+            }
+        };
+        $('#web-action button[name=register]').click(function(){
+            console.log('web-event: ' + uid + ' init start');
+            var data = {};
+            var uid = $("#web-action select[name=uid]").val();
+
+            data.event = "app:init";
+            data.uid = uid;
+            conn.send(JSON.stringify(data));
+            console.log('web-event: ' + uid + ' init end');
+        });
+
+        $("#web-action button[name=send]").click(function(e) {
+            var data2 = {};
+            var uid = $("#web-action select[name=uid]").val();
+            var action = $("#web-action input[name=action]").val();
+            var action_data = $("#web-action input[name=action_data]").val();
+
+            console.log('web-event: ' + uid + ' send start');
+            data2.event = "client-event";
+            data2.uid = uid;
+            data2.channel = "UID_" + uid;
+            data2.action = action;
+            data2.action_data = action_data;
+            conn.send(JSON.stringify(data2));
+            console.log('web-event: ' + uid + ' send end');
+
+            e.preventDefault(); // avoid to execute the actual submit of the form.
+            return false;
+        });
+    });
+</script>
+</body>
+</html>

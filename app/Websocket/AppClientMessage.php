@@ -39,7 +39,7 @@ class AppClientMessage implements PusherMessage
             return;
         }
 
-        DashboardLogger::clientMessage($this->connection, $this->payload);
+        // DashboardLogger::clientMessage($this->connection, $this->payload);
 
         $channel = $this->channelManager->find($this->connection->app->id, $this->payload->channel);
 
